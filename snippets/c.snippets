@@ -422,12 +422,13 @@ snippet pcfile
 
 
 snippet hfile
-    /**
-    * @file        module.h
-    * @author      IRQdesign d.o.o 
-    * @date        
-    * @version     1.0.0
-    */
+	/**
+	 * @file        module.h
+	 * @author      IRQdesign d.o.o 
+	 * @date        
+	 * @version     1.0.0
+	 */
+
 	/* Define to prevent recursive inclusion *********************************** */
 	#ifndef ${1:`toupper(vim_snippets#Filename('__$1_H', 'UNTITLED_H'))`}
 	#define $1
