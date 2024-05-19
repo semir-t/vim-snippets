@@ -4,12 +4,14 @@ snippet main
 	int main(int argc, char *argv[])
 	{
 		${0}
+		return 0;
 	}
 # main(void)
 snippet mainn
 	int main(void)
 	{
 		${0}
+		return 0;
 	}
 ##
 ## Preprocessor
@@ -37,15 +39,55 @@ snippet #if
 	#if ${1:FOO}
 		${0:${VISUAL}}
 	#endif
-# header include guard
-snippet once
-	#ifndef ${1:`toupper(vim_snippets#Filename('$1_H', 'UNTITLED_H'))`}
 
-	#define $1
+snippet honce
+	/**
+	* @file        `vim_snippets#Filename('$1.h', 'untitled.h')`
+	* @author      semir-t
+	* @date        `strftime("%B %Y")`
+	* @version     1.0.0
+	*/
 
-	${0}
+	/* Define to prevent recursive inclusion *********************************** */
+	#ifndef ${0:`toupper(vim_snippets#Filename('__$1_H', '__UNTITLED_H'))`}
+	#define $0
+	/* Includes **************************************************************** */
+	
+	/* Module configuration **************************************************** */
 
-	#endif /* end of include guard: $1 */
+	/* Exported constants ****************************************************** */
+	
+	/* Exported macros ********************************************************* */
+	
+	/* Exported types ********************************************************** */
+
+	/* Exported variables ****************************************************** */
+	
+	/* Exported functions ****************************************************** */
+
+	#endif 
+
+snippet conce
+	/* Includes **************************************************************** */
+	#include "${1:`vim_snippets#Filename("$1.h")`}"
+	
+	/* Private types *********************************************************** */
+	
+	/* Private constants ******************************************************* */
+	
+	/* Private macros ********************************************************** */
+	
+	/* Private variables ******************************************************* */
+	
+	/* Private function prototypes ********************************************* */
+	
+	/* Exported functions ****************************************************** */
+	
+	/* Private functions ******************************************************* */
+	
+	/* ***************************** END OF FILE ******************************* */
+
+
 # Disable C++ name mangling in C headers
 snippet nocxx
 	#ifdef __cplusplus
@@ -84,8 +126,8 @@ snippet elif
 snippet ifi
 	if (${1:true}) ${0};
 # ternary
-snippet t Ternary: `condition ? true : false`
-	$1 ? $2 : $0
+snippet t
+	${1:/* condition */} ? ${2:a} : ${3:b}
 # switch
 snippet switch
 	switch (${1:/* variable */}) {
@@ -109,8 +151,6 @@ snippet case
 		${3:break;}
 snippet ret
 	return ${0};
-snippet ex
-	exit($0);
 ##
 ## Loops
 # for
@@ -125,19 +165,21 @@ snippet forr
 	}
 # while
 snippet wh
-	while (${1:1}) {
-		${0:${VISUAL}}
-	}
-snippet wht
-	while (true) {
+	while (${1:/* condition */}) {
 		${0:${VISUAL}}
 	}
 # do... while
 snippet do
 	do {
 		${0:${VISUAL}}
-	} while ($1);
+	} while (${1:/* condition */});
 ##
+
+## uBitDesign
+# Debug interface
+snippet debug_init
+	debug_init((USART_HAL *) &g_USARTx_HAL,921600,"Project name");
+
 ## Functions
 # function definition
 snippet fun
@@ -153,16 +195,10 @@ snippet fun0
 	}
 # function definition with Doxygen documentation
 snippet dfun0
-	/*! \brief ${1:Brief function description here}
-	 *
-	 *  ${2:Detailed description of the function}
-	 *
-	 * \return ${3:Return parameter description}
+	/** 
+	 *	@brief ${1:Brief function description here}
+	 *	@retval ${3:Return parameter description}
 	 */
-	${4:void} ${5:function_name}()
-	{
-		${6}
-	}
 # function definition with one parameter
 snippet fun1
 	${1:void} ${2:function_name}(${3:Type} ${4:Parameter})
@@ -171,17 +207,11 @@ snippet fun1
 	}
 # function definition with one parameter with  Doxygen documentation
 snippet dfun1
-	/*! \brief ${1:Brief function description here}
-	 *
-	 *  ${2:Detailed description of the function}
-	 *
-	 * \param $3 ${4:Parameter description}
-	 * \return ${5:Return parameter description}
+	/** 
+	 * @brief ${1:Brief function description here}
+	 * @param $3 ${4:Parameter description}
+	 * @retval ${5:Return parameter description}
 	 */
-	${6:void} ${7:function_name}(${8:Type} ${3:Parameter})
-	{
-		${9}
-	}
 # function definition with two parameters
 snippet fun2
 	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter})
@@ -190,18 +220,11 @@ snippet fun2
 	}
 # function definition with two parameters with  Doxygen documentation
 snippet dfun2
-	/*! \brief ${1:Brief function description here}
-	 *
-	 *  ${2:Detailed description of the function}
-	 *
-	 * \param $3 ${4:Parameter description}
-	 * \param $5 ${6:Parameter description}
-	 * \return ${7:Return parameter description}
+	/** @brief ${1:Brief function description here}
+	 *	@param $3 ${4:Parameter description}
+	 *	@param $5 ${6:Parameter description}
+	 *	2return ${7:Return parameter description}
 	 */
-	${8:void} ${9:function_name}(${10:Type} ${3:Parameter}, ${11:Type} ${5:Parameter})
-	{
-		${12}
-	}
 # function definition with three parameters
 snippet fun3
 	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}, ${7:Type} ${8:Parameter})
@@ -251,7 +274,8 @@ snippet tds
 	typedef struct ${2:_$1 }{
 		m_${3:Data} /*!< ${4:Description} */
 	} ${1:`vim_snippets#Filename('$1_t', 'name')`};
-
+snippet tdsm
+	/*!< ${4:Description} */
 snippet enum
 	/*! \enum $1
 	 *
@@ -281,14 +305,6 @@ snippet prf
 	printf("${1:} = %f\n", $1);
 snippet prx
 	printf("${1:} = %${2}\n", $1);
-snippet warn
-	warn("${1:%s}"$0);
-snippet warnx
-	warnx("${1:%s}"$0);
-snippet err
-	err(${1:1}, "${2:%s}"$0);
-snippet errx
-	errx(${1:1}, "${2:%s}"$0);
 # getopt
 snippet getopt
 	int choice;
@@ -349,7 +365,7 @@ snippet getopt
 
 ## Assertions
 snippet asr
-	assert($1);
+	assert(${1:condition});
 
 snippet anl
 	assert(${1:ptr} != NULL);
@@ -390,93 +406,3 @@ snippet asm
 	:
 	:
 	);
-
-snippet phfile
-	/* Define to prevent recursive inclusion *********************************** */
-	#ifndef ${1:`toupper(vim_snippets#Filename('__$1_H', 'UNTITLED_H'))`}
-	#define $1
-
-	/* Includes **************************************************************** */
-
-	/* Exported constants ****************************************************** */
-
-	/* Exported macros ********************************************************* */
-
-	/* Exported types ********************************************************** */
-
-	/* Exported variables ****************************************************** */
-	
-	/* Exported functions ****************************************************** */
-
-	#endif 
-	/* ***************************** END OF FILE ******************************* */
-
-snippet pcfile
-	/* Includes **************************************************************** */
-	#include ${1:`vim_snippets#Filename('"$1.h"', 'file.h')`}
-
-	/* Private constants ******************************************************* */
-
-
-	/* Private macros ********************************************************** */
-
-	/* Private types *********************************************************** */
-
-	/* Private variables ******************************************************* */
-
-	/* Private function prototypes ********************************************* */
-
-	/* Exported functions ****************************************************** */
-
-	/* Private functions ******************************************************* */
-
-	/* ***************************** END OF FILE ******************************* */
-
-
-snippet hfile
-	/**
-	 * @file        module.h
-	 * @author      IRQdesign d.o.o 
-	 * @date        May 2022
-	 * @version     1.0.0
-	 */
-
-	/* Define to prevent recursive inclusion *********************************** */
-	#ifndef ${1:`toupper(vim_snippets#Filename('__$1_H', 'UNTITLED_H'))`}
-	#define $1
-
-	/* Includes **************************************************************** */
-
-	/* Exported constants ****************************************************** */
-
-	/* Exported macros ********************************************************* */
-
-	/* Exported types ********************************************************** */
-
-	/* Exported variables ****************************************************** */
-	
-	/* Exported functions ****************************************************** */
-
-	#endif 
-	/* ***************************** END OF FILE ******************************* */
-
-snippet cfile
-	/* Includes **************************************************************** */
-	#include ${1:`vim_snippets#Filename('"$1.h"', 'file.h')`}
-
-	/* Private constants ******************************************************* */
-
-
-	/* Private macros ********************************************************** */
-
-	/* Private types *********************************************************** */
-
-	/* Private variables ******************************************************* */
-
-	/* Private function prototypes ********************************************* */
-
-	/* Exported functions ****************************************************** */
-
-	/* Private functions ******************************************************* */
-
-	/* ***************************** END OF FILE ******************************* */
