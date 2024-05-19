@@ -177,8 +177,8 @@ snippet do
 
 ## uBitDesign
 # Debug interface
-snippet debug_init
-	debug_init((USART_HAL *) &g_USARTx_HAL,921600,"Project name");
+snippet dinit
+	debug_init(&g_USARTx_HAL,921600,"${1}");
 
 ## Functions
 # function definition
